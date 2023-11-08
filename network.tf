@@ -1,10 +1,10 @@
 # Creating the VPC
 
 resource "aws_vpc" "vpc" {
-  cidr_block       = "10.10.0.0/16"
+  cidr_block       = "10.0.0.0/16"
   instance_tenancy = "default"
   tags = {
-    Name = "VPC-071" 
+    Name = "MyVpc" 
   }
 }
 
@@ -13,7 +13,7 @@ resource "aws_vpc" "vpc" {
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.vpc.id
   tags = {
-    Name = "IGW-071" # Internet Gateway name
+    Name = "MyIgw" # Internet Gateway name
   }
 }
 
@@ -24,17 +24,25 @@ data "aws_availability_zones" "available" {
 
 #  Creating 2 Public Subnets in each AZ
 resource "aws_subnet" "public" {
-  count             = 2
   vpc_id            = aws_vpc.vpc.id
-  cidr_block        = "10.10.${1 + count.index}.0/24"  # CIDR calculation
+  cidr_block        = "10.0.1.0/24"  
   availability_zone = element
 tags = {
-    Name = "PublicSubnet-071-${count.index + 1}"
+    Name = "PublicSubnetA"
      "kubernetes.io/cluster/my-eks-201" = "shared"
     "kubernetes.io/roles/elb"        = "1"
     }
 }
-
+resource "aws_subnet" "public" {
+  vpc_id            = aws_vpc.vpc.id
+  cidr_block        = "10.0.2.0/24"  
+  availability_zone = element
+tags = {
+    Name = "PublicSubnetB"
+     "kubernetes.io/cluster/my-eks-201" = "shared"
+    "kubernetes.io/roles/elb"        = "1"
+    }
+}
 # Creating an elastic IP
 resource "aws_eip" "eip" {
   domain = "vpc"
@@ -48,22 +56,29 @@ resource "aws_nat_gateway" "network_interface" {
   depends_on    = [aws_internet_gateway.igw]
 
   tags = {
-    Name = "NGW-071" # NAT Gateway name
+    Name = "NAT" # NAT Gateway name
   }
 }
 
 # Creating 2 Private Subnets in each AZ
 resource "aws_subnet" "private" {
-  count             = 2
+ 
   vpc_id            = aws_vpc.vpc.id
-  cidr_block        = "10.10.${10 + count.index * 4}.0/24"  # CIDR calculation
+  cidr_block        = "10.0.3.0/24" 
   availability_zone = element
-    Name = "PrivateSubnet-071-${count.index + 1}"
+    Name = "PrivateSubnetA"
     "kubernetes.io/cluster/my-eks-201" = "shared"
     "kubernetes.io/roles/elb"        = "1"
     }
-}
-
+resource "aws_subnet" "private" {
+ 
+  vpc_id            = aws_vpc.vpc.id
+  cidr_block        = "10.0.4.0/24" 
+  availability_zone = element
+    Name = "PrivateSubnetB"
+    "kubernetes.io/cluster/my-eks-201" = "shared"
+    "kubernetes.io/roles/elb"        = "1"
+    }
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.vpc.id
 
@@ -72,7 +87,7 @@ resource "aws_route_table" "public" {
     gateway_id = aws_internet_gateway.igw.id
   }
 tags = {
-    Name = "PublicRouteTables-071"
+    Name = "PublicRouteTable"
   }
 }
 
@@ -92,7 +107,7 @@ resource "aws_route_table" "private" {
     nat_gateway_id = aws_nat_gateway.network_interface.id
   }
 tags = {
-    Name = "PrivateRouteTables-071"
+    Name = "PrivateRouteTable"
   }
 }
 # Associating private subnets to private route table
