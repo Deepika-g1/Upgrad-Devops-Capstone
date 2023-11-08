@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: upgrad-pv
+  namespace: demo
+  labels:
+    type: upgrad-pv
+spec:
+  claimRef:
+    name: upgrad-pvc
+    namespace: demo
+  capacity:
+    storage: 11Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /var/lib/redis
