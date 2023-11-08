@@ -4,7 +4,7 @@ resource "aws_vpc" "vpc" {
   cidr_block       = "10.10.0.0/16"
   instance_tenancy = "default"
   tags = {
-    Name = "VPC-071" #VPC name
+    Name = "VPC-071" 
   }
 }
 
@@ -27,7 +27,7 @@ resource "aws_subnet" "public" {
   count             = 2
   vpc_id            = aws_vpc.vpc.id
   cidr_block        = "10.10.${1 + count.index}.0/24"  # CIDR calculation
-  availability_zone = element(data.aws_availability_zones.available.names, count.index)
+  availability_zone = element
 tags = {
     Name = "PublicSubnet-071-${count.index + 1}"
      "kubernetes.io/cluster/my-eks-201" = "shared"
@@ -57,15 +57,13 @@ resource "aws_subnet" "private" {
   count             = 2
   vpc_id            = aws_vpc.vpc.id
   cidr_block        = "10.10.${10 + count.index * 4}.0/24"  # CIDR calculation
-  availability_zone = element(data.aws_availability_zones.available.names, count.index)
-tags = {
+  availability_zone = element
     Name = "PrivateSubnet-071-${count.index + 1}"
     "kubernetes.io/cluster/my-eks-201" = "shared"
     "kubernetes.io/roles/elb"        = "1"
     }
 }
 
-# Creating a public Route Table
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.vpc.id
 
