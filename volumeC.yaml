@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: upgrad-pvc
+  namespace: demo
+  labels:
+      type: upgrad-pvc
+spec:
+  volumeName: upgrad-pv
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 3Gi
