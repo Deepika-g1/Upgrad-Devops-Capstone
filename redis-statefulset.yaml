@@ -17,7 +17,7 @@ spec:
       volumes:
         - name: upgrad-storage
           persistentVolumeClaim:
-            claimName: upgrad-pvc
+            claimName: deepika-pvc
       containers:
       - name: redis
         image: redis:6.2-alpine
