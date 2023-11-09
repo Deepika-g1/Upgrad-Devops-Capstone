@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: upgrad-pvc
+  name: deepika-pvc
   namespace: demo
   labels:
-      type: upgrad-pvc
+      type: deepika-pvc
 spec:
-  volumeName: upgrad-pv
+  volumeName: deepika-pv
   accessModes:
     - ReadWriteOnce
   resources:
